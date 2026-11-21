@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 5vh 7vw;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8; color: #1d2b36; user-select: none;
+  }
+  h1 { font-size: clamp(32px, 4.5vw, 64px); margin: 0 0 8px; color: #0b5c8c; }
+  .subtitle { font-size: clamp(18px, 2vw, 30px); color: #5a6b78; margin: 0 0 4vh; }
+  details {
+    background: #fff; border-radius: 16px; margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08); overflow: hidden;
+  }
+  summary {
+    list-style: none; cursor: pointer; position: relative;
+    padding: 28px 90px 28px 32px;
+    font-size: clamp(20px, 2.4vw, 36px); font-weight: bold;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+"; position: absolute; right: 32px; top: 50%;
+    transform: translateY(-50%); font-size: 1.4em; color: #0b5c8c;
+  }
+  details[open] summary { background: #e8f1f7; }
+  details[open] summary::after { content: "–"; }
+  .answer {
+    padding: 22px 32px 32px;
+    font-size: clamp(18px, 2vw, 30px); line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<h1 id="title"></h1>
+<p class="subtitle" id="subtitle"></p>
+<div id="list"></div>
+
+<script>
+  // ===== EDIT YOUR CONTENT HERE =====
+  const FAQ_TITLE = "Frequently Asked Questions";
+  const FAQ_SUBTITLE = "Berühren Sie eine Frage um die Antwort zu sehen";
+
+  const faqs = [
+    {
+      question: "Wie sind die Öffnungszeiten?",
+      answer: "Mo 8:00-12:00, Di 9:30-12:00 & 14:30-18:00, Do 14:30-18:00, Fr 8:00-12:00",
+    },
+    {
+      question: "Brauche ich einen Termin?",
+      answer: "Für die bestmögliche Koordination und um Wartezeiten für Sie zu minimieren, bitten wir Sie einen Termin zu vereinbaren.",
+    },
+    {
+      question: "Wie kann ich einen Termin vereinbaren?",
+      answer: "Sehr gerne können Sie online einen Termin vereinbaren, bequem vom Sofa aus und zu jeder Zeit. Zudem können Sie uns natürlich anrufen und persönlich einen Termin ausmachen.",
+    },
+    {
+      question: "Wie lange dauert es, bis ich meine Einlagen abholen kann?",
+      answer: "Wir haben das Ziel Sie bestmöglichst zu versorgen und wollen Ihnen ein individuell zugeschnittenes Produkt fertigen. Daher können die Zeiten für die Produktion leicht variieren. Einlagen sind im Normalfall innerhalb von 2 Wochen abholbereit.",
+    },
+    {
+      question: "Muss ich zur Abholung persönlich vorbeikommen oder kann jemand anderes das Produkt für mich abholen?",
+      answer: "Wir möchten Ihnen ein absolut zufriedenstellendes Produkt zur Verfügung stellen, dass optimal an Ihre Bedürfnisse angepasst ist. Daher empfehlen wir Ihnen persönlich zur Abholung Ihrer Einlagen zu kommen und 1 Paar *einlagentaugliche* Schuhe mitzubringen. Dann werden wir die Einlagen in Ihren Schuh einpassen.",
+    },
+    {
+      question: "Brauche ich zwingend ein Rezept?",
+      answer: "Selbstverständlich können Sie sich ihre neue Einlagen, Kompressionsstrümpfe, ... auch privat zulegen. Sprechen Sie uns an für genauere Informationen bezüglich Kosten.",
+    },
+  ];
+  // ===== END OF CONTENT =====
+
+  document.getElementById("title").textContent = FAQ_TITLE;
+  document.getElementById("subtitle").textContent = FAQ_SUBTITLE;
+
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const fmt = s => esc(s).replace(/\*(.+?)\*/g, "<em>$1</em>"); // *text* = italic
+
+  const list = document.getElementById("list");
+  faqs.forEach(f => {
+    const d = document.createElement("details");
+    d.innerHTML = `<summary>${esc(f.question)}</summary><div class="answer">${fmt(f.answer)}</div>`;
+    list.appendChild(d);
+  });
+
+  // Only one answer open at a time
+  const items = document.querySelectorAll("details");
+  items.forEach(d => d.addEventListener("toggle", () => {
+    if (d.open) items.forEach(o => { if (o !== d) o.open = false; });
+  }));
+
+  // Reset after 60 seconds without touch
+  let timer;
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      items.forEach(d => d.open = false);
+      window.scrollTo(0, 0);
+    }, 60000);
+  }
+  ["touchstart", "click", "scroll"].forEach(e =>
+    document.addEventListener(e, resetTimer, { passive: true }));
+  resetTimer();
+</script>
+</body>
+</html>
